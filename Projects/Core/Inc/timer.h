@@ -9,8 +9,13 @@
 #define INC_TIMER_H_
 
 #include "main.h"
-#include "input_reading.h"
+//#include "input_reading.h"
 
-void set_timer_auto_increase(uint16_t);
-uint8_t is_flagged_timer_auto_increase(void);
+#define TIME_UNIT 10 //in ms
+
+void set_timer_blink(uint16_t);
+uint8_t is_timer_blink_flagged(void);
+
+//void set_timer_auto_increase(uint16_t);
+//uint8_t is_flagged_timer_auto_increase(void);
 #endif /* INC_TIMER_H_ */

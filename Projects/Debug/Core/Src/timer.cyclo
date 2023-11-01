@@ -1,6 +1,4 @@
-timer.c:17:6:set_timer_auto_increase	1
-timer.c:23:6:set_led_test	1
-timer.c:29:6:led_test_run	2
-timer.c:38:6:timer_auto_increase_run	2
-timer.c:47:9:is_flagged_timer_auto_increase	1
-timer.c:52:6:HAL_TIM_PeriodElapsedCallback	2
+timer.c:21:6:set_timer_blink	1
+timer.c:27:9:is_timer_blink_flagged	1
+timer.c:32:6:timer_blink_run	2
+timer.c:55:6:HAL_TIM_PeriodElapsedCallback	2
