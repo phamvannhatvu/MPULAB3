@@ -24,7 +24,7 @@ void fsm_for_input_processing(void)
 		if (is_button_pressed(0))
 		{
 			buttonState = BUTTON_PRESSED;
-			HAL_GPIO_TogglePin(LED_Test_GPIO_Port, LED_Test_Pin);
+			HAL_GPIO_TogglePin(LED1_RED_GPIO_Port, LED1_RED_Pin);
 			increase_led();
 		}
 		break;
