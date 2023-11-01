@@ -52,7 +52,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-
+void leds_init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -96,17 +96,20 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   HAL_TIM_Base_Start_IT(&htim2);
-  HAL_GPIO_WritePin(EN_7SEG1_TEN_GPIO_Port, EN_7SEG1_TEN_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(EN_7SEG1_UNIT_GPIO_Port, EN_7SEG1_UNIT_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(EN_7SEG2_TEN_GPIO_Port, EN_7SEG2_TEN_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(EN_7SEG2_UNIT_GPIO_Port, EN_7SEG2_UNIT_Pin, GPIO_PIN_SET);
+  leds_init();
+  set_timer_blink(500);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  fsm_for_input_processing();
-	  display7SEG(led_value);
+	  if (is_timer_blink_flagged())
+	  {
+		  HAL_GPIO_TogglePin(LED1_GREEN_GPIO_Port, LED1_GREEN_Pin);
+		  set_timer_blink(500);
+	  }
+//	  fsm_for_input_processing();
+//	  display7SEG(led_value);
   }
   /* USER CODE END 3 */
 }
@@ -166,7 +169,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 7999;
+  htim2.Init.Prescaler = 799;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 9;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -247,13 +250,28 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void increase_led(void)
+//void increase_led(void)
+//{
+//	++led_value;
+//	if (led_value >= 10)
+//	{
+//		led_value = 0;
+//	}
+//}
+
+void leds_init()
 {
-	++led_value;
-	if (led_value >= 10)
-	{
-		led_value = 0;
-	}
+	HAL_GPIO_WritePin(EN_7SEG1_TEN_GPIO_Port, EN_7SEG1_TEN_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(EN_7SEG1_UNIT_GPIO_Port, EN_7SEG1_UNIT_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(EN_7SEG2_TEN_GPIO_Port, EN_7SEG2_TEN_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(EN_7SEG2_UNIT_GPIO_Port, EN_7SEG2_UNIT_Pin, GPIO_PIN_SET);
+
+	HAL_GPIO_WritePin(LED1_RED_GPIO_Port, LED1_RED_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED1_GREEN_GPIO_Port, LED1_GREEN_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED1_YELLOW_GPIO_Port, LED1_YELLOW_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED2_RED_GPIO_Port, LED2_RED_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED2_GREEN_GPIO_Port, LED2_GREEN_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED2_YELLOW_GPIO_Port, LED2_YELLOW_Pin, GPIO_PIN_SET);
 }
 /* USER CODE END 4 */
 
