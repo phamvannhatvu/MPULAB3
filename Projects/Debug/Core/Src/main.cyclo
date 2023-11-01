@@ -1,6 +1,7 @@
-main.c:67:5:main	2
-main.c:121:6:SystemClock_Config	3
-main.c:158:13:MX_TIM2_Init	4
-main.c:203:13:MX_GPIO_Init	1
-main.c:262:6:leds_init	1
-main.c:282:6:Error_Handler	1
+main.c:78:5:main	18
+main.c:195:6:SystemClock_Config	3
+main.c:232:13:MX_TIM2_Init	4
+main.c:277:13:MX_GPIO_Init	1
+main.c:336:9:get_system_mode	5
+main.c:357:6:init_leds	1
+main.c:377:6:Error_Handler	1

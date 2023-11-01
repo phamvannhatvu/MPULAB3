@@ -1,4 +1,7 @@
-timer.c:21:6:set_timer_blink	1
-timer.c:27:9:is_timer_blink_flagged	1
-timer.c:32:6:timer_blink_run	2
+timer.c:15:6:set_timer_blink	1
+timer.c:21:9:is_timer_blink_flagged	1
+timer.c:26:6:timer_blink_run	2
+timer.c:35:6:set_timer_btn_reading	1
+timer.c:41:9:is_timer_btn_reading_flagged	1
+timer.c:46:6:timer_btn_reading_run	2
 timer.c:55:6:HAL_TIM_PeriodElapsedCallback	2

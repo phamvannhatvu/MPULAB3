@@ -31,7 +31,9 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "input_processing.h"
+#include "led_display.h"
+#include "timer.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

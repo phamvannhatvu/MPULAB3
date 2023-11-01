@@ -10,10 +10,16 @@
 
 #include "main.h"
 #include "input_reading.h"
-#include "timer.h"
 
-#define AUTO_INCREASE_DURATION 500
+enum ButtonState
+{
+	BUTTON_RELEASED,
+	BUTTON_PRESSED,
+	BUTTON_PRESSED_MORE_THAN_1_SECOND
+};
 
-void fsm_for_input_processing(void);
+enum ButtonState get_button_state(uint8_t);
+void init_button_state();
+void not_auto_increase_btn_fsm(uint8_t);
 
 #endif /* INC_INPUT_PROCESSING_H_ */

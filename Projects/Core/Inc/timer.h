@@ -15,7 +15,7 @@
 
 void set_timer_blink(uint16_t);
 uint8_t is_timer_blink_flagged(void);
+void set_timer_btn_reading(uint16_t);
+uint8_t is_timer_btn_reading_flagged(void);
 
-//void set_timer_auto_increase(uint16_t);
-//uint8_t is_flagged_timer_auto_increase(void);
 #endif /* INC_TIMER_H_ */

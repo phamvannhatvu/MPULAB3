@@ -8,13 +8,7 @@
 #include "main.h"
 #include "input_reading.h"
 
-#define NO_OF_BUTTONS 1
-
-#define DURATION_FOR_AUTO_INCREASING 100
-#define SELECT_MODE_IS_PRESSED GPIO_PIN_RESET
-#define SELECT_MODE_IS_RELEASED GPIO_PIN_SET
-
-static GPIO_PinState buttonBuffer[] = {SELECT_MODE_IS_RELEASED};
+static GPIO_PinState buttonBuffer[NO_OF_BUTTONS];
 
 static GPIO_PinState debounceButtonBuffer1[NO_OF_BUTTONS];
 static GPIO_PinState debounceButtonBuffer2[NO_OF_BUTTONS];
@@ -22,16 +16,19 @@ static GPIO_PinState debounceButtonBuffer2[NO_OF_BUTTONS];
 static uint8_t flagForButtonPress1s[NO_OF_BUTTONS];
 static uint16_t counterForButtonPress1s[NO_OF_BUTTONS];
 
+static GPIO_TypeDef * buttonPort[NO_OF_BUTTONS] = {SELECT_MODE_BTN_GPIO_Port};
+static uint16_t buttonPin[NO_OF_BUTTONS] = {SELECT_MODE_BTN_Pin};
+
 void button_reading(void)
 {
 	for (uint8_t i = 0; i < NO_OF_BUTTONS; ++i)
 	{
 		debounceButtonBuffer2[i] = debounceButtonBuffer1[i];
-		debounceButtonBuffer1[i] = HAL_GPIO_ReadPin(SELECT_MODE_BTN_GPIO_Port, SELECT_MODE_BTN_Pin);
+		debounceButtonBuffer1[i] = HAL_GPIO_ReadPin(buttonPort[i], buttonPin[i]);
 		if (debounceButtonBuffer1[i] == debounceButtonBuffer2[i])
 		{
 			buttonBuffer[i] = debounceButtonBuffer1[i];
-			if (buttonBuffer[i] == SELECT_MODE_IS_PRESSED)
+			if (buttonBuffer[i] == BUTTON_IS_PRESSED)
 			{
 				if (counterForButtonPress1s[i] < DURATION_FOR_AUTO_INCREASING)
 				{
@@ -52,11 +49,24 @@ void button_reading(void)
 unsigned char is_button_pressed(uint8_t index)
 {
 	if (index >= NO_OF_BUTTONS) return 0;
-	return (buttonBuffer[0] == SELECT_MODE_IS_PRESSED);
+	return (buttonBuffer[index] == BUTTON_IS_PRESSED);
 }
 
 unsigned char is_button_pressed_1s(uint8_t index)
 {
 	if (index >= NO_OF_BUTTONS) return 0;
 	return (flagForButtonPress1s[index] == 1);
+}
+
+void init_button()
+{
+	for (uint8_t i = 0; i < NO_OF_BUTTONS; ++i)
+	{
+		buttonBuffer[i] = BUTTON_IS_RELEASED;
+		debounceButtonBuffer1[i] = BUTTON_IS_RELEASED;
+		debounceButtonBuffer2[i] = BUTTON_IS_RELEASED;
+
+		flagForButtonPress1s[i] = 0;
+		counterForButtonPress1s[i] = 0;
+	}
 }

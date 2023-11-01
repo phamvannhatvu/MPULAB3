@@ -7,52 +7,39 @@
 
 #include "input_processing.h"
 
-enum ButtonState
-{
-	BUTTON_RELEASED,
-	BUTTON_PRESSED,
-	BUTTON_PRESSED_MORE_THAN_1_SECOND
-};
+enum ButtonState buttonState[NO_OF_BUTTONS];
 
-enum ButtonState buttonState = BUTTON_RELEASED;
-
-void fsm_for_input_processing(void)
+enum ButtonState get_button_state(uint8_t index)
 {
-//	switch (buttonState)
-//	{
-//	case BUTTON_RELEASED:
-//		if (is_button_pressed(0))
-//		{
-//			buttonState = BUTTON_PRESSED;
-//			HAL_GPIO_TogglePin(LED1_RED_GPIO_Port, LED1_RED_Pin);
-//			increase_led();
-//		}
-//		break;
-//	case BUTTON_PRESSED:
-//		if (!is_button_pressed(0))
-//		{
-//			buttonState = BUTTON_RELEASED;
-//		}else
-//		{
-//			if (is_button_pressed_1s(0))
-//			{
-//				buttonState = BUTTON_PRESSED_MORE_THAN_1_SECOND;
-//				set_timer_auto_increase(AUTO_INCREASE_DURATION);
-//			}
-//		}
-//		break;
-//	case BUTTON_PRESSED_MORE_THAN_1_SECOND:
-//		if (!is_button_pressed(0))
-//		{
-//			buttonState = BUTTON_RELEASED;
-//		}else
-//		{
-//			if (is_flagged_timer_auto_increase())
-//			{
-//				increase_led();
-//				set_timer_auto_increase(AUTO_INCREASE_DURATION);
-//			}
-//		}
-//		break;
-//	}
+	return buttonState[index];
+}
+
+void init_button_state()
+{
+	for (uint8_t i = 0; i < NO_OF_BUTTONS; ++i)
+	{
+		buttonState[i] = BUTTON_RELEASED;
+	}
+}
+
+//FSM for buttons that do not support auto-increment while holding.
+void not_auto_increase_btn_fsm(uint8_t index)
+{
+	switch (buttonState[index])
+	{
+	case BUTTON_RELEASED:
+		if (is_button_pressed(0))
+		{
+			buttonState[index] = BUTTON_PRESSED;
+		}
+		break;
+	case BUTTON_PRESSED:
+		if (!is_button_pressed(0))
+		{
+			buttonState[index] = BUTTON_RELEASED;
+		}
+		break;
+	default:
+		break;
+	}
 }

@@ -1,6 +1,7 @@
-../Core/Src/main.c:67:5:main	8	static
-../Core/Src/main.c:121:6:SystemClock_Config	72	static
-../Core/Src/main.c:158:13:MX_TIM2_Init	32	static
-../Core/Src/main.c:203:13:MX_GPIO_Init	32	static
-../Core/Src/main.c:262:6:leds_init	8	static
-../Core/Src/main.c:282:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:78:5:main	16	static
+../Core/Src/main.c:195:6:SystemClock_Config	72	static
+../Core/Src/main.c:232:13:MX_TIM2_Init	32	static
+../Core/Src/main.c:277:13:MX_GPIO_Init	32	static
+../Core/Src/main.c:336:9:get_system_mode	16	static
+../Core/Src/main.c:357:6:init_leds	8	static
+../Core/Src/main.c:377:6:Error_Handler	4	static,ignoring_inline_asm

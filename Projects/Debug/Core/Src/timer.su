@@ -1,4 +1,7 @@
-../Core/Src/timer.c:21:6:set_timer_blink	16	static
-../Core/Src/timer.c:27:9:is_timer_blink_flagged	4	static
-../Core/Src/timer.c:32:6:timer_blink_run	4	static
+../Core/Src/timer.c:15:6:set_timer_blink	16	static
+../Core/Src/timer.c:21:9:is_timer_blink_flagged	4	static
+../Core/Src/timer.c:26:6:timer_blink_run	4	static
+../Core/Src/timer.c:35:6:set_timer_btn_reading	16	static
+../Core/Src/timer.c:41:9:is_timer_btn_reading_flagged	4	static
+../Core/Src/timer.c:46:6:timer_btn_reading_run	4	static
 ../Core/Src/timer.c:55:6:HAL_TIM_PeriodElapsedCallback	16	static

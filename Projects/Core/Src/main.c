@@ -21,8 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "input_processing.h"
-#include "led_display.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,6 +30,17 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+enum SystemState
+{
+	NORMAL_MODE,
+	NORMAL_MODE_PRESSED,
+	MODIFY_RED,
+	MODIFY_RED_PRESSED,
+	MODIFY_GREEN,
+	MODIFY_GREEN_PRESSED,
+	MODIFY_YELLOW,
+	MODIFY_YELLOW_PRESSED
+};
 
 /* USER CODE END PD */
 
@@ -52,7 +61,9 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-void leds_init(void);
+void init_leds(void);
+uint8_t get_system_mode(enum SystemState);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -96,20 +107,83 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   HAL_TIM_Base_Start_IT(&htim2);
-  leds_init();
-  set_timer_blink(500);
+  init_leds();
+  init_button_state();
+  init_button();
+  set_timer_btn_reading(10);
+  enum SystemState systemState = NORMAL_MODE;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if (is_timer_blink_flagged())
+
+	  //Read button every 10ms
+	  if (is_timer_btn_reading_flagged())
 	  {
-		  HAL_GPIO_TogglePin(LED1_GREEN_GPIO_Port, LED1_GREEN_Pin);
-		  set_timer_blink(500);
+		  button_reading();
+		  set_timer_btn_reading(10);
 	  }
-//	  fsm_for_input_processing();
-//	  display7SEG(led_value);
+
+	  //Update the state of select mode button (index 0)
+	  //This button does not support auto-increment while holding
+	  not_auto_increase_btn_fsm(0);
+	  enum ButtonState selectModeButton = get_button_state(0);
+
+	  //FSM for the entire system
+	  switch (systemState)
+	  {
+	  case NORMAL_MODE:
+		  if (selectModeButton == BUTTON_PRESSED)
+		  {
+			  systemState = NORMAL_MODE_PRESSED;
+		  }
+		  break;
+	  case NORMAL_MODE_PRESSED:
+		  if (selectModeButton == BUTTON_RELEASED)
+		  {
+			  systemState = MODIFY_RED;
+		  }
+		  break;
+	  case MODIFY_RED:
+		  if (selectModeButton == BUTTON_PRESSED)
+		  {
+			  systemState = MODIFY_RED_PRESSED;
+		  }
+		  break;
+	  case MODIFY_RED_PRESSED:
+		  if (selectModeButton == BUTTON_RELEASED)
+		  {
+			  systemState = MODIFY_GREEN;
+		  }
+		  break;
+	  case MODIFY_GREEN:
+		  if (selectModeButton == BUTTON_PRESSED)
+		  {
+			  systemState = MODIFY_GREEN_PRESSED;
+		  }
+		  break;
+	  case MODIFY_GREEN_PRESSED:
+		  if (selectModeButton == BUTTON_RELEASED)
+		  {
+			  systemState = MODIFY_YELLOW;
+		  }
+		  break;
+	  case MODIFY_YELLOW:
+		  if (selectModeButton == BUTTON_PRESSED)
+		  {
+			  systemState = MODIFY_YELLOW_PRESSED;
+		  }
+		  break;
+	  case MODIFY_YELLOW_PRESSED:
+		  if (selectModeButton == BUTTON_RELEASED)
+		  {
+			  systemState = NORMAL_MODE;
+		  }
+		  break;
+	  }
+//
+//	  display7SEG(get_system_mode(systemState));
   }
   /* USER CODE END 3 */
 }
@@ -259,9 +333,30 @@ static void MX_GPIO_Init(void)
 //	}
 //}
 
-void leds_init()
+uint8_t get_system_mode(enum SystemState systemState)
 {
-	HAL_GPIO_WritePin(EN_7SEG1_TEN_GPIO_Port, EN_7SEG1_TEN_Pin, GPIO_PIN_SET);
+	switch (systemState)
+	{
+	case NORMAL_MODE:
+	case NORMAL_MODE_PRESSED:
+		return 1;
+	case MODIFY_RED:
+	case MODIFY_RED_PRESSED:
+		return 2;
+	case MODIFY_GREEN:
+	case MODIFY_GREEN_PRESSED:
+		return 3;
+	case MODIFY_YELLOW:
+	case MODIFY_YELLOW_PRESSED:
+		return 4;
+	}
+
+	return 5;//invalid mode
+}
+
+void init_leds()
+{
+	HAL_GPIO_WritePin(EN_7SEG1_TEN_GPIO_Port, EN_7SEG1_TEN_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(EN_7SEG1_UNIT_GPIO_Port, EN_7SEG1_UNIT_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(EN_7SEG2_TEN_GPIO_Port, EN_7SEG2_TEN_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(EN_7SEG2_UNIT_GPIO_Port, EN_7SEG2_UNIT_Pin, GPIO_PIN_SET);

@@ -7,16 +7,10 @@
 
 #include "timer.h"
 
-//uint16_t timerAutoIncreaseCounter = 0;
-//uint8_t timerAutoIncreaseFlag = 0;
+uint16_t timerBtnReadingCounter = 0;
+uint8_t timerBtnReadingFlag = 0;
 uint16_t timerBlinkCounter = 0;
 uint8_t timerBlinkFlag = 0;
-
-//void set_timer_auto_increase(uint16_t duration)
-//{
-//	timerAutoIncreaseCounter = duration / TIME_UNIT;
-//	timerAutoIncreaseFlag = 0;
-//}
 
 void set_timer_blink(uint16_t duration)
 {
@@ -38,27 +32,32 @@ void timer_blink_run(void)
 	}
 }
 
-//void timer_auto_increase_run(void)
-//{
-//	--timerAutoIncreaseCounter;
-//	if (timerAutoIncreaseCounter <= 0)
-//	{
-//		timerAutoIncreaseFlag = 1;
-//	}
-//}
-//
-//uint8_t is_flagged_timer_auto_increase(void)
-//{
-//	return timerAutoIncreaseFlag;
-//}
+void set_timer_btn_reading(uint16_t duration)
+{
+	timerBtnReadingCounter = duration / TIME_UNIT;
+	timerBtnReadingFlag = 0;
+}
+
+uint8_t is_timer_btn_reading_flagged(void)
+{
+	return timerBtnReadingFlag;
+}
+
+void timer_btn_reading_run(void)
+{
+	--timerBtnReadingCounter;
+	if (timerBtnReadingCounter <= 0)
+	{
+		timerBtnReadingFlag = 1;
+	}
+}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if (htim->Instance == TIM2)
 	{
-//		timer_auto_increase_run();
 		timer_blink_run();
-//		button_reading();
+		timer_btn_reading_run();
 	}
 }
 
