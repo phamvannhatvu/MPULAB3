@@ -1,1 +1,6 @@
-led_display.c:10:6:display7SEG	1
+led_display.c:32:6:traffic_light_reset	1
+led_display.c:49:6:traffic_light_fsm	21
+led_display.c:155:6:blink_led	8
+led_display.c:197:6:led7_scanning	9
+led_display.c:243:6:blink_led_clear	1
+led_display.c:254:6:display7SEG	11

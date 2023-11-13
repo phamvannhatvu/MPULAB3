@@ -63,6 +63,7 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 void init_leds(void);
 uint8_t get_system_mode(enum SystemState);
+void init_timers(void);
 
 /* USER CODE END PFP */
 
@@ -110,7 +111,9 @@ int main(void)
   init_leds();
   init_button_state();
   init_button();
-  set_timer_btn_reading(10);
+  init_timers();
+  traffic_light_reset();
+
   enum SystemState systemState = NORMAL_MODE;
   while (1)
   {
@@ -134,56 +137,68 @@ int main(void)
 	  switch (systemState)
 	  {
 	  case NORMAL_MODE:
+		  traffic_light_fsm();
 		  if (selectModeButton == BUTTON_PRESSED)
 		  {
 			  systemState = NORMAL_MODE_PRESSED;
 		  }
 		  break;
 	  case NORMAL_MODE_PRESSED:
+		  traffic_light_fsm();
 		  if (selectModeButton == BUTTON_RELEASED)
 		  {
 			  systemState = MODIFY_RED;
+			  blink_led_clear();
 		  }
 		  break;
 	  case MODIFY_RED:
+		  blink_led(RED);
 		  if (selectModeButton == BUTTON_PRESSED)
 		  {
 			  systemState = MODIFY_RED_PRESSED;
 		  }
 		  break;
 	  case MODIFY_RED_PRESSED:
+		  blink_led(RED);
 		  if (selectModeButton == BUTTON_RELEASED)
 		  {
 			  systemState = MODIFY_GREEN;
+			  blink_led_clear();
 		  }
 		  break;
 	  case MODIFY_GREEN:
+		  blink_led(GREEN);
 		  if (selectModeButton == BUTTON_PRESSED)
 		  {
 			  systemState = MODIFY_GREEN_PRESSED;
 		  }
 		  break;
 	  case MODIFY_GREEN_PRESSED:
+		  blink_led(GREEN);
 		  if (selectModeButton == BUTTON_RELEASED)
 		  {
 			  systemState = MODIFY_YELLOW;
+			  blink_led_clear();
 		  }
 		  break;
 	  case MODIFY_YELLOW:
+		  blink_led(YELLOW);
 		  if (selectModeButton == BUTTON_PRESSED)
 		  {
 			  systemState = MODIFY_YELLOW_PRESSED;
 		  }
 		  break;
 	  case MODIFY_YELLOW_PRESSED:
+		  blink_led(YELLOW);
 		  if (selectModeButton == BUTTON_RELEASED)
 		  {
 			  systemState = NORMAL_MODE;
+			  traffic_light_reset();
 		  }
 		  break;
 	  }
-//
-//	  display7SEG(get_system_mode(systemState));
+
+	  led7_scanning();
   }
   /* USER CODE END 3 */
 }
@@ -243,7 +258,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 799;
+  htim2.Init.Prescaler = 7999;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 9;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -324,15 +339,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-//void increase_led(void)
-//{
-//	++led_value;
-//	if (led_value >= 10)
-//	{
-//		led_value = 0;
-//	}
-//}
-
 uint8_t get_system_mode(enum SystemState systemState)
 {
 	switch (systemState)
@@ -367,6 +373,12 @@ void init_leds()
 	HAL_GPIO_WritePin(LED2_RED_GPIO_Port, LED2_RED_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(LED2_GREEN_GPIO_Port, LED2_GREEN_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(LED2_YELLOW_GPIO_Port, LED2_YELLOW_Pin, GPIO_PIN_SET);
+}
+
+void init_timers()
+{
+	set_timer_btn_reading(10);
+	set_timer_7seg_scan(SCANNING_DURATION);
 }
 /* USER CODE END 4 */
 

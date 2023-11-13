@@ -10,6 +10,24 @@
 
 #include "main.h"
 
-void display7SEG(uint8_t);
+#define NO_OF_ROADS 2
+#define TRAFFIC_DURATION 1000
+#define BLINK_DURATION 250
+#define NUM_OF_7SEG_LEDS 4
 
+enum TrafficLightState
+{
+	RED,
+	GREEN,
+	YELLOW
+};
+
+void display7SEG(uint8_t);
+void traffic_light_reset(void);
+void traffic_light_fsm(void);
+
+void blink_led(enum TrafficLightState);
+void blink_led_clear(void);
+
+void led7_scanning();
 #endif /* INC_LED_DISPLAY_H_ */
