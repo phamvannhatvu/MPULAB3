@@ -21,6 +21,9 @@ uint8_t timerTraffic1Flag = 0;
 uint16_t timerTraffic2Counter = 0;
 uint8_t timerTraffic2Flag = 0;
 
+uint16_t timerAutoIncreaseCounter = 0;
+uint8_t timerAutoIncreaseFlag = 0;
+
 void set_timer_blink(uint16_t duration)
 {
 	timerBlinkCounter = duration / TIME_UNIT;
@@ -121,6 +124,26 @@ void timer_traffic2_run()
 	}
 }
 
+void set_timer_auto_increase(uint16_t duration)
+{
+	timerAutoIncreaseCounter = duration / TIME_UNIT;
+	timerAutoIncreaseFlag = 0;
+}
+
+void timer_auto_increase_run()
+{
+	--timerAutoIncreaseCounter;
+	if (timerAutoIncreaseCounter <= 0)
+	{
+		timerAutoIncreaseFlag = 1;
+	}
+}
+
+uint8_t is_timer_auto_increase_flagged()
+{
+	return timerAutoIncreaseFlag;
+}
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if (htim->Instance == TIM2)
@@ -130,6 +153,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 		timer_traffic1_run();;
 		timer_traffic2_run();
 		timer_blink_run();
+		timer_auto_increase_run();
 	}
 }
 

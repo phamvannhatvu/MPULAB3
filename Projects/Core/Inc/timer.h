@@ -27,4 +27,8 @@ void set_timer_traffic1(uint16_t);
 uint8_t is_timer_traffic1_flagged(void);
 void set_timer_traffic2(uint16_t);
 uint8_t is_timer_traffic2_flagged(void);
+
+void set_timer_auto_increase(uint16_t);
+uint8_t is_timer_auto_increase_flagged(void);
+
 #endif /* INC_TIMER_H_ */

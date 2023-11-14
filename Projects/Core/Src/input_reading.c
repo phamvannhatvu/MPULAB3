@@ -16,8 +16,8 @@ static GPIO_PinState debounceButtonBuffer2[NO_OF_BUTTONS];
 static uint8_t flagForButtonPress1s[NO_OF_BUTTONS];
 static uint16_t counterForButtonPress1s[NO_OF_BUTTONS];
 
-static GPIO_TypeDef * buttonPort[NO_OF_BUTTONS] = {SELECT_MODE_BTN_GPIO_Port};
-static uint16_t buttonPin[NO_OF_BUTTONS] = {SELECT_MODE_BTN_Pin};
+static GPIO_TypeDef * buttonPort[NO_OF_BUTTONS] = {SELECT_MODE_BTN_GPIO_Port, MODIFY_CYCLE_BTN_GPIO_Port, SET_VALUE_BTN_GPIO_Port};
+static uint16_t buttonPin[NO_OF_BUTTONS] = {SELECT_MODE_BTN_Pin, MODIFY_CYCLE_BTN_Pin, SET_VALUE_BTN_Pin};
 
 void button_reading(void)
 {

@@ -35,25 +35,36 @@ enum SystemState
 	NORMAL_MODE,
 	NORMAL_MODE_PRESSED,
 	MODIFY_RED,
+	UPDATE_RED_COUNTER,
+	AUTO_UPDATE_RED_COUTER,
 	MODIFY_RED_PRESSED,
 	MODIFY_GREEN,
+	UPDATE_GREEN_COUNTER,
+	AUTO_UPDATE_GREEN_COUTER,
 	MODIFY_GREEN_PRESSED,
 	MODIFY_YELLOW,
-	MODIFY_YELLOW_PRESSED
+	UPDATE_YELLOW_COUNTER,
+	AUTO_UPDATE_YELLOW_COUTER,
+	MODIFY_YELLOW_PRESSED,
+	NORMAL_MODE_RETURN_PRESSED
 };
 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define AUTO_INCREASE_DURATION 500
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
-
+uint8_t red_duration = 5;
+uint8_t green_duration = 3;
+uint8_t yellow_duration = 2;
+uint8_t duration_temp;
 /* USER CODE BEGIN PV */
-uint8_t led_value = 0;
+//used to detect the previous state when the "normal mode return" button is pressed
+enum SystemState preState = NORMAL_MODE;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -128,10 +139,19 @@ int main(void)
 		  set_timer_btn_reading(10);
 	  }
 
-	  //Update the state of select mode button (index 0)
+	  //Update the state of "select mode" button (index 0)
 	  //This button does not support auto-increment while holding
 	  not_auto_increase_btn_fsm(0);
 	  enum ButtonState selectModeButton = get_button_state(0);
+
+	  //Update the state of "modify cycle" button (index 1)
+	  auto_increase_btn_fsm(1);
+	  enum ButtonState modifyCycleButton = get_button_state(1);
+
+	  //Update the state of "normal mode return" button (index 2)
+	  //This button does not support auto-increment while holding
+	  not_auto_increase_btn_fsm(2);
+	  enum ButtonState normalModeReturnButton = get_button_state(2);
 
 	  //FSM for the entire system
 	  switch (systemState)
@@ -149,6 +169,7 @@ int main(void)
 		  {
 			  systemState = MODIFY_RED;
 			  blink_led_clear();
+			  duration_temp = red_duration;
 		  }
 		  break;
 	  case MODIFY_RED:
@@ -157,6 +178,40 @@ int main(void)
 		  {
 			  systemState = MODIFY_RED_PRESSED;
 		  }
+		  if (modifyCycleButton == BUTTON_PRESSED)
+		  {
+			  systemState = UPDATE_RED_COUNTER;
+		  }
+		  if (normalModeReturnButton == BUTTON_PRESSED)
+		  {
+			  preState = systemState;
+			  systemState = NORMAL_MODE_RETURN_PRESSED;
+		  }
+		  break;
+	  case UPDATE_RED_COUNTER:
+		  blink_led(RED);
+		  if (modifyCycleButton == BUTTON_RELEASED)
+		  {
+			  ++duration_temp;
+			  systemState = MODIFY_RED;
+		  }
+		  if (modifyCycleButton == BUTTON_PRESSED_MORE_THAN_1_SECOND)
+		  {
+			  set_timer_auto_increase(AUTO_INCREASE_DURATION);
+			  systemState = AUTO_UPDATE_RED_COUTER;
+		  }
+		  break;
+	  case AUTO_UPDATE_RED_COUTER:
+		  blink_led(RED);
+		  if (modifyCycleButton == BUTTON_RELEASED)
+		  {
+			  systemState = MODIFY_RED;
+		  }
+		  if (is_timer_auto_increase_flagged())
+		  {
+			  ++duration_temp;
+			  set_timer_auto_increase(AUTO_INCREASE_DURATION);
+		  }
 		  break;
 	  case MODIFY_RED_PRESSED:
 		  blink_led(RED);
@@ -164,6 +219,7 @@ int main(void)
 		  {
 			  systemState = MODIFY_GREEN;
 			  blink_led_clear();
+			  duration_temp = green_duration;
 		  }
 		  break;
 	  case MODIFY_GREEN:
@@ -172,6 +228,40 @@ int main(void)
 		  {
 			  systemState = MODIFY_GREEN_PRESSED;
 		  }
+		  if (modifyCycleButton == BUTTON_PRESSED)
+		  {
+			  systemState = UPDATE_GREEN_COUNTER;
+		  }
+		  if (normalModeReturnButton == BUTTON_PRESSED)
+		  {
+			  preState = systemState;
+			  systemState = NORMAL_MODE_RETURN_PRESSED;
+		  }
+		  break;
+	  case UPDATE_GREEN_COUNTER:
+		  blink_led(GREEN);
+		  if (modifyCycleButton == BUTTON_RELEASED)
+		  {
+			  ++duration_temp;
+			  systemState = MODIFY_GREEN;
+		  }
+		  if (modifyCycleButton == BUTTON_PRESSED_MORE_THAN_1_SECOND)
+		  {
+			  set_timer_auto_increase(AUTO_INCREASE_DURATION);
+			  systemState = AUTO_UPDATE_GREEN_COUTER;
+		  }
+		  break;
+	  case AUTO_UPDATE_GREEN_COUTER:
+		  blink_led(GREEN);
+		  if (modifyCycleButton == BUTTON_RELEASED)
+		  {
+			  systemState = MODIFY_GREEN;
+		  }
+		  if (is_timer_auto_increase_flagged())
+		  {
+			  ++duration_temp;
+			  set_timer_auto_increase(AUTO_INCREASE_DURATION);
+		  }
 		  break;
 	  case MODIFY_GREEN_PRESSED:
 		  blink_led(GREEN);
@@ -179,6 +269,7 @@ int main(void)
 		  {
 			  systemState = MODIFY_YELLOW;
 			  blink_led_clear();
+			  duration_temp = yellow_duration;
 		  }
 		  break;
 	  case MODIFY_YELLOW:
@@ -187,12 +278,81 @@ int main(void)
 		  {
 			  systemState = MODIFY_YELLOW_PRESSED;
 		  }
+		  if (modifyCycleButton == BUTTON_PRESSED)
+		  {
+			  systemState = UPDATE_YELLOW_COUNTER;
+		  }
+		  if (normalModeReturnButton == BUTTON_PRESSED)
+		  {
+			  preState = systemState;
+			  systemState = NORMAL_MODE_RETURN_PRESSED;
+		  }
+		  break;
+	  case UPDATE_YELLOW_COUNTER:
+		  blink_led(YELLOW);
+		  if (modifyCycleButton == BUTTON_RELEASED)
+		  {
+			  ++duration_temp;
+			  systemState = MODIFY_YELLOW;
+		  }
+		  if (modifyCycleButton == BUTTON_PRESSED_MORE_THAN_1_SECOND)
+		  {
+			  set_timer_auto_increase(AUTO_INCREASE_DURATION);
+			  systemState = AUTO_UPDATE_YELLOW_COUTER;
+		  }
+		  break;
+	  case AUTO_UPDATE_YELLOW_COUTER:
+		  blink_led(YELLOW);
+		  if (modifyCycleButton == BUTTON_RELEASED)
+		  {
+			  systemState = MODIFY_YELLOW;
+		  }
+		  if (is_timer_auto_increase_flagged())
+		  {
+			  ++duration_temp;
+			  set_timer_auto_increase(AUTO_INCREASE_DURATION);
+		  }
 		  break;
 	  case MODIFY_YELLOW_PRESSED:
 		  blink_led(YELLOW);
 		  if (selectModeButton == BUTTON_RELEASED)
 		  {
 			  systemState = NORMAL_MODE;
+			  traffic_light_reset();
+		  }
+		  break;
+	  case NORMAL_MODE_RETURN_PRESSED:
+		  switch (preState)
+		  {
+		  case MODIFY_RED:
+			  blink_led(RED);
+			  break;
+		  case MODIFY_GREEN:
+			  blink_led(GREEN);
+			  break;
+		  case MODIFY_YELLOW:
+			  blink_led(YELLOW);
+			  break;
+		  default:
+			  break;
+		  }
+		  if (normalModeReturnButton == BUTTON_RELEASED)
+		  {
+			  systemState = NORMAL_MODE;
+			  switch (preState)
+			  {
+			  case MODIFY_RED:
+				  red_duration = duration_temp;
+				  break;
+			  case MODIFY_GREEN:
+				  green_duration = duration_temp;
+				  break;
+			  case MODIFY_YELLOW:
+				  yellow_duration = duration_temp;
+				  break;
+			  default:
+				  break;
+			  }
 			  traffic_light_reset();
 		  }
 		  break;
@@ -355,6 +515,8 @@ uint8_t get_system_mode(enum SystemState systemState)
 	case MODIFY_YELLOW:
 	case MODIFY_YELLOW_PRESSED:
 		return 4;
+	case NORMAL_MODE_RETURN_PRESSED:
+		return 0;
 	}
 
 	return 5;//invalid mode

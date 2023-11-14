@@ -7,10 +7,6 @@
 
 #include "led_display.h"
 
-uint8_t red_duration = 5;
-uint8_t green_duration = 3;
-uint8_t yellow_duration = 2;
-
 //initial state: red at one road and green at the other
 uint8_t roadCounter[NO_OF_ROADS];
 
@@ -155,13 +151,12 @@ void traffic_light_fsm()
 void blink_led(enum TrafficLightState mode_color)
 {
 	led_7seg_values[0] = 0;
-
+	led_7seg_values[2] = duration_temp / 10;
+	led_7seg_values[3] = duration_temp % 10;
 	switch (mode_color)
 	{
 	case RED:
 		led_7seg_values[1] = 2;
-		led_7seg_values[2] = red_duration / 10;
-		led_7seg_values[3] = red_duration % 10;
 		if (is_timer_blink_flagged())
 		{
 			HAL_GPIO_TogglePin(redPort[0], redPin[0]);
@@ -171,8 +166,6 @@ void blink_led(enum TrafficLightState mode_color)
 		break;
 	case GREEN:
 		led_7seg_values[1] = 3;
-		led_7seg_values[2] = green_duration / 10;
-		led_7seg_values[3] = green_duration % 10;
 		if (is_timer_blink_flagged())
 		{
 			HAL_GPIO_TogglePin(greenPort[0], greenPin[0]);
@@ -182,8 +175,6 @@ void blink_led(enum TrafficLightState mode_color)
 		break;
 	case YELLOW:
 		led_7seg_values[1] = 4;
-		led_7seg_values[2] = yellow_duration / 10;
-		led_7seg_values[3] = yellow_duration % 10;
 		if (is_timer_blink_flagged())
 		{
 			HAL_GPIO_TogglePin(yellowPort[0], yellowPin[0]);

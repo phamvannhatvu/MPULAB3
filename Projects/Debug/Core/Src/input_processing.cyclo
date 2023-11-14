@@ -1,3 +1,4 @@
 input_processing.c:12:18:get_button_state	1
 input_processing.c:17:6:init_button_state	2
 input_processing.c:26:6:not_auto_increase_btn_fsm	5
+input_processing.c:48:6:auto_increase_btn_fsm	9

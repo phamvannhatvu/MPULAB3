@@ -38,7 +38,10 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+extern uint8_t red_duration;
+extern uint8_t green_duration;
+extern uint8_t yellow_duration;
+extern uint8_t duration_temp;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -48,7 +51,6 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

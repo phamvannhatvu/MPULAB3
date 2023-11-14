@@ -21,5 +21,6 @@ enum ButtonState
 enum ButtonState get_button_state(uint8_t);
 void init_button_state();
 void not_auto_increase_btn_fsm(uint8_t);
+void auto_increase_btn_fsm(uint8_t);
 
 #endif /* INC_INPUT_PROCESSING_H_ */
